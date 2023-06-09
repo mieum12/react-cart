@@ -12,8 +12,13 @@ const Cart = (props) => {
   //장바구니에 상품이 비면 주문 버튼이 안보이도록 장바구니 확인
   const hasItems = cartCtx.items.length > 0;
 
-  const cartItemRemoveHandler = (id) => {};
-  const cartItemAddHandler = (item) => {};
+  const cartItemRemoveHandler = (id) => {
+    cartCtx.removeItem(id);
+  };
+  const cartItemAddHandler = (item) => {
+    // cartCtx.addItem({ item, amount: 1 });
+    cartCtx.addItem(item);
+  };
 
   const cartItems = (
     <ul className={classes["cart-items"]}>

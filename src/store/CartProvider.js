@@ -39,8 +39,31 @@ const cartReducer = (state, action) => {
       totalAmount: updatedTotalAmount,
     };
   }
-  // if (action.type === "REMOVE") {
-  // }
+
+  if (action.type === "REMOVE") {
+    //기존의 아이템 찾기
+    const existingCartItemIndex = state.items.findIndex(
+      (item) => item.id === action.id
+    );
+    const existingItem = state.items[existingCartItemIndex];
+    const updatedTotalAmount = state.totalAmount - existingItem.price;
+
+    let updatedItems;
+    //1보다 작으면 삭제하고 1 보다 크면 계속 카트에 두고 수량만 줄이고싶다
+    if (existingItem.amount === 1) {
+      //그대로 둘 상품
+      updatedItems = state.items.filter((item) => item.id !== action.id);
+    } else {
+      const updatedItem = { ...existingItem, amount: existingItem.amount - 1 };
+      updatedItems = [...state.items]; //일단 기존의 항목을 가져온다
+      updatedItems[existingCartItemIndex] = updatedItem; //기존 항목이 들어있는 새 배열을 만든다
+    }
+
+    return {
+      items: updatedItems,
+      totalAmount: updatedTotalAmount,
+    };
+  }
   return defaultCartState;
 };
 
