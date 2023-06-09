@@ -8,9 +8,32 @@ const defaultCartState = {
 
 const cartReducer = (state, action) => {
   if (action.type === "ADD") {
-    const updatedItems = state.items.concat(action.item);
     const updatedTotalAmount =
       state.totalAmount + action.item.price * action.item.amount;
+
+    //이미 장바구니에 들어있는 상품 거르기
+    const existingCartItemIndex = state.items.findIndex(
+      (item) => item.id === action.item.id
+    );
+    //해당 항목이 있는 경우 작동, 존재하지 않으면 existingCartItem은 null
+    const existingCartItem = state.items[existingCartItemIndex];
+
+    let updatedItems;
+
+    //중복된 항목을 카트에 담는 경우
+    if (existingCartItem) {
+      const updatedItem = {
+        ...existingCartItem,
+        amount: existingCartItem.amount + action.item.amount,
+      };
+      updatedItems = [...state.items];
+      //이전 항목을 updatedItem로 덮어쓰기
+      updatedItems[existingCartItemIndex] = updatedItem;
+    } else {
+      //새로운 아이템을 카트에 담을 경우
+      updatedItems = state.items.concat(action.item);
+    }
+
     return {
       items: updatedItems,
       totalAmount: updatedTotalAmount,
