@@ -43,6 +43,8 @@ const Cart = (props) => {
     );
     setIsSubmitting(false);
     setSubmitIsDone(true);
+    //주문 완료 후 카트 비우기
+    cartCtx.clearCart();
   };
 
   const cartItems = (
