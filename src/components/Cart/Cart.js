@@ -27,6 +27,17 @@ const Cart = (props) => {
     setIsCheckout(true);
   };
 
+  //checkout 컴포넌트에서 전달받은 사용자 정보(userData)를 가져온 뒤 백엔드로 전송하기!!
+  const submitOrderHandler = (userData) => {
+    fetch("https://react-http-510c3-default-rtdb.firebaseio.com/order.json", {
+      method: "POST",
+      body: JSON.stringify({
+        user: userData,
+        orderedItems: cartCtx.items,
+      }),
+    });
+  };
+
   const cartItems = (
     <ul className={classes["cart-items"]}>
       {cartCtx.items.map((item) => (
@@ -62,7 +73,9 @@ const Cart = (props) => {
         <span>Total Amount</span>
         <span>{totalAmount}</span>
       </div>
-      {isCheckout && <Checkout onCancel={props.onClose} />}
+      {isCheckout && (
+        <Checkout onConfirm={submitOrderHandler} onCancel={props.onClose} />
+      )}
       {!isCheckout && modalActions}
     </Modal>
   );

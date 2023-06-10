@@ -53,7 +53,14 @@ const Checkout = (props) => {
       return;
     }
 
-    //제출!
+    //우선 카트 컴포넌트로 제출! -> 그 다음 사용자 정보와, 카드 상품 정보를 함께 백엔드로 보낸다
+    //cart 컴포넌트 안에서 지정한 Prop이름 =onConfirm
+    props.onConfirm({
+      name: enteredName,
+      address: enteredAdress,
+      detailAddress: enteredDetailAddress,
+      phone: enteredPhone,
+    });
   };
 
   const addressControlClasses = `${classes.control} ${
