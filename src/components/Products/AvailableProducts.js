@@ -1,37 +1,71 @@
+import { useEffect, useState } from "react";
 import Card from "../UI/Card";
 import classes from "./AvailableProducts.module.css";
 import ProductItem from "./ProductItem/ProductItem";
 
-const DUMMY_PRODUCTS = [
-  {
-    id: "m1",
-    name: "토끼 인형",
-    description: "뽀글뽀글한 토끼 인형입니다",
-    price: 10.0,
-  },
-  {
-    id: "m2",
-    name: "하트 스퀴져 키링",
-    description: "열쇠 모양의 하트 스퀴져이며 키링으로 쓰실 수 있습니다",
-    price: 16.5,
-  },
-  {
-    id: "m3",
-    name: "바다 유리잔",
-    description: "직접 그려넣은 파도 디자인이 특징인 제품입니다",
-    price: 12.99,
-  },
-  {
-    id: "m4",
-    name: "파스타 플레이트",
-    description:
-      "넓고 살짝 가운데가 깊게 제작하여 음식을 담아 먹기에 용이하게 제작하였습니다",
-    price: 18.99,
-  },
-];
-
 const AvailableProducts = () => {
-  const productsList = DUMMY_PRODUCTS.map((product) => (
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [httpError, setHttpError] = useState();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      const response = await fetch(
+        "https://react-http-510c3-default-rtdb.firebaseio.com/products.json"
+      );
+
+      if (!response.ok) {
+        throw new Error("오류가 발생했습니다!!!");
+      }
+
+      const responseData = await response.json();
+
+      const loadProducts = [];
+
+      //key는 우리가 가져오는 id
+      for (const key in responseData) {
+        loadProducts.push({
+          id: key,
+          name: responseData[key].name,
+          description: responseData[key].description,
+          price: responseData[key].price,
+        });
+      }
+
+      setProducts(loadProducts);
+      setIsLoading(false);
+    };
+
+    //fetchProducts는 async function이고 항상 promise를 반환한다
+    //그래서 promise 대신 오류를 가져오는 경우 그 오류로 인해 해당 promise가 가부하게 된다 -> 그래서 try catch로 에러를 잡을 수 없다
+
+    //promise 내부의 error 다루는 방법
+    fetchProducts()
+      .then()
+      .catch((error) => {
+        setIsLoading(false);
+        setHttpError(error.message);
+      });
+  }, []);
+
+  if (isLoading) {
+    return (
+      <section className={classes.ProductsLoading}>
+        <h1> Loading...</h1>
+      </section>
+    );
+  }
+
+  if (httpError) {
+    return (
+      <section className={classes.ProductsError}>
+        <h1>{httpError}</h1>
+      </section>
+    );
+  }
+
+  const productsList = products.map((product) => (
     <ProductItem
       id={product.id}
       key={product.id}

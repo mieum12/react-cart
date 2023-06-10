@@ -5,6 +5,16 @@
   animation: products-appear 1s ease-out forwards;
 }
 
+.ProductsLoading {
+  text-align: center;
+  color: white;
+}
+
+.ProductsError {
+  text-align: center;
+  color: red;
+}
+
 .products ul {
   list-style: none;
   margin: 0;
